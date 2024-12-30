@@ -1,4 +1,8 @@
-export default function Main() {
+import '../translates/i18n'
+import { useTranslation } from 'react-i18next'
 
-    return <main></main>
+export default function Main() {
+    const { t } = useTranslation()
+
+    return <main>{t('title')}</main>
 }
