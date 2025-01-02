@@ -29,7 +29,15 @@ export default function Layout() {
             </span>
             <Button type="primary" onClick={handleChangeLang} className="rounded-full uppercase">{ availableLangs[currentLang] }</Button>
         </header>
-        <Outlet />
+        {/*
+            9.5rem is the sum of:
+                h-10 = 2.5rem (header)
+                py-4 = 2*1rem = 2rem (header padding)
+                h-20 = 5rem (footer)
+        */}
+        <main style={{ height: 'calc(100vh - 9.5rem)' }}>
+            <Outlet />
+        </main>
         <footer className="bg-white bg-shadow-slate sm:flex flex-row justify-between py-4 px-6 h-20 hidden absolute bottom-0 w-full max-w-4xl mx-auto"></footer>
     </div>
 }
