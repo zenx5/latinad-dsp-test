@@ -5,7 +5,7 @@ import InputLocation from "../InputLocation/InputLocation";
 
 export default function FormSearch() {
 
-    return <form className="corners relative flex flex-col items-center gap-2 sm:gap-5 w-full sm:w-1/2 md:w-1/3 py-8 px-4 bg-white sm:rounded-tl-xl sm:rounded-br-xl rounded-none bottom-0">
+    return <form className="corners relative flex flex-col items-center gap-2 sm:gap-5 h-fit w-full sm:w-1/2 md:w-1/3 py-8 px-4 bg-white sm:rounded-tl-xl sm:rounded-br-xl rounded-none bottom-0">
         <InputLocation />
         <Input size="large" className="w-11/12" prefix={
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">

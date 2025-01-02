@@ -17,7 +17,7 @@ export default function Layout() {
         i18n.changeLanguage( availableLangs[nextLang] )
     }
 
-    return <div className="w-screen h-screen m-0 p-0  max-w-4xl mx-auto bg-slate-300">
+    return <div className="w-screen h-screen m-0 p-0  max-w-4xl mx-auto bg-[#075E96]">
         <header className="bg-white bg-shadow-slate flex flex-row justify-between py-4 px-6">
             <span className="flex sm:flex-row flex-col sm:items-start items-center sm:gap-2 gap-1 h-10">
                 <span className="sm:w-10 sm:h-10 w-5 h-5">
@@ -29,13 +29,7 @@ export default function Layout() {
             </span>
             <Button type="primary" onClick={handleChangeLang} className="rounded-full uppercase">{ availableLangs[currentLang] }</Button>
         </header>
-        {/*
-            9.5rem is the sum of:
-                h-10 = 2.5rem (header)
-                py-4 = 2*1rem = 2rem (header padding)
-                h-20 = 5rem (footer)
-        */}
-        <main style={{ height: 'calc(100vh - 9.5rem)' }}>
+        <main className="layout-main-root">
             <Outlet />
         </main>
         <footer className="bg-white bg-shadow-slate sm:flex flex-row justify-between py-4 px-6 h-20 hidden absolute bottom-0 w-full max-w-4xl mx-auto"></footer>

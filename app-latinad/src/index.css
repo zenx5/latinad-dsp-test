@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.layout-main-root {
+    @apply sm:h-with-footer h-without-footer;
+}
