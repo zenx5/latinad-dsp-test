@@ -8,3 +8,12 @@
         @apply content-[''] border-b-[0.8rem] border-l-[0.8rem] border-primary w-12 h-12;
     }
 }
+
+.ant-picker-input{
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 10px;
+    & .ant-picker-suffix{
+        opacity: 1 !important;
+    }
+}
