@@ -3,13 +3,13 @@ import { Outlet } from "react-router";
 import { useTranslation } from "react-i18next";
 import Isotipo from "../assets/latinad.isotipo.svg?react"
 import Imagotipo from "../assets/latinad.imagotipo.svg?react"
-import { availableLangs } from "../translates/langs";
+import { availableLangs, defaultLang } from "../translates/langs";
 import { useState } from "react";
 
 
 export default function Layout() {
-    const [currentLang, setCurrentLang] = useState(0)
     const { i18n } = useTranslation()
+    const [currentLang, setCurrentLang] = useState( availableLangs.indexOf(defaultLang) )
 
     const handleChangeLang = () => {
         const nextLang = currentLang===availableLangs.length-1 ? 0 : currentLang + 1
