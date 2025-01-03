@@ -15,8 +15,13 @@ export default function FormSearch() {
         setDateEnd( value as string )
     }
 
+    const handleChangePlace = (place:google.maps.places.PlaceResult) => {
+        const { lat, lng } = place.geometry?.location?.toJSON() as { lat:number, lng:number }
+        console.log( lat, lng )
+    }
+
     return <form className="corners relative flex flex-col items-center gap-2 sm:gap-5 h-fit w-full sm:w-1/2 md:w-1/3 py-8 px-4 bg-white sm:rounded-tl-xl sm:rounded-br-xl rounded-none bottom-0">
-        <InputLocation />
+        <InputLocation onPlaceChanged={handleChangePlace} />
         <DatePicker className="w-11/12" size="large" onChange={handleChangeStart} suffixIcon={<IconDate />} />
         <DatePicker className="w-11/12" size="large" onChange={handleChangeEnd} suffixIcon={<IconDate />} />
         <Button className="bg-primary hover:!text-primary text-white py-2 text-lg">Consultar</Button>
