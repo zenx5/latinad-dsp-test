@@ -1,7 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { Input } from "antd";
-import { Autocomplete, useLoadScript } from "@react-google-maps/api";
-import type { Libraries } from "@react-google-maps/api";
+import { Autocomplete } from "@react-google-maps/api";
 
 type InputLocationProps = {
     onPlaceChanged: (place:google.maps.places.PlaceResult) => void
@@ -10,14 +9,6 @@ type InputLocationProps = {
 export default function InputLocation({ onPlaceChanged }:InputLocationProps) {
     const [name, setName] = useState("")
     const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete>()
-
-    const libraries = [ "places", "geometry" ] as Libraries
-
-    const { isLoaded } = useLoadScript({
-        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
-        libraries: libraries
-    });
-
 
     const handleChangeName = (ev:ChangeEvent<HTMLInputElement>) => {
         setName(ev.target.value)
@@ -41,7 +32,7 @@ export default function InputLocation({ onPlaceChanged }:InputLocationProps) {
         setAutocomplete( loadedAuto )
     }
 
-    return isLoaded && <Autocomplete onLoad={handleLoad} onPlaceChanged={handlePlaceChanged} className="w-11/12">
+    return <Autocomplete onLoad={handleLoad} onPlaceChanged={handlePlaceChanged} className="w-11/12">
         <Input size="large" prefix={<IconLocation />} value={name} onChange={handleChangeName}/>
     </Autocomplete>
 }
