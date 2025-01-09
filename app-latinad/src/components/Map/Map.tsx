@@ -1,4 +1,4 @@
-import { GoogleMap } from "@react-google-maps/api"
+import { GoogleMap, Marker } from "@react-google-maps/api"
 import './Map.css'
 import { useRef } from "react"
 
@@ -8,12 +8,10 @@ type MapProps = {
         lng: number
     }
     onChangePosition?: (location:{ lat:number, lng:number}) => void
+    children?: React.ReactElement|React.ReactElement[]
 }
 
-export default function Map({ center, onChangePosition }:MapProps) {
-    const containerRef = useRef<HTMLDivElement>(null)
-    const mapRef = useRef<GoogleMap>(null)
-
+export default function Map({ center, onChangePosition, children }:MapProps) {
     const handleChangePosition = async (event:google.maps.MapMouseEvent) => {
         if(onChangePosition && event.latLng) {
             onChangePosition({
@@ -23,9 +21,8 @@ export default function Map({ center, onChangePosition }:MapProps) {
         }
     }
 
-    return <div className="map-container z-0" ref={containerRef}>
+    return <div className="map-container">
         <GoogleMap
-            ref={mapRef}
             options={{
                 disableDefaultUI: false,
                 clickableIcons: true,
@@ -33,12 +30,11 @@ export default function Map({ center, onChangePosition }:MapProps) {
             }}
             zoom={9}
             center={center}
-            mapTypeId={google.maps.MapTypeId.ROADMAP}
-            mapContainerClassName="w-full h-full border-2 border-green-500"
+            mapTypeId={google.maps.MapTypeId.HYBRID}
             mapContainerStyle={{ width:'894px', height:'894px' }}
             onClick={handleChangePosition}
         >
-
+            { children }
         </GoogleMap>
     </div>
 }

@@ -3,9 +3,27 @@ import { Button, DatePicker } from "antd";
 import "./FormSearch.css"
 import InputLocation from "../InputLocation/InputLocation";
 
-export default function FormSearch() {
-    const [, setDateStart] = useState('2019-09-03')
-    const [, setDateEnd] = useState('2019-09-03')
+type latLngType = {
+    lat: number,
+    lng: number
+}
+
+type customEventSearch = {
+    position: latLngType
+    dateStart: string
+    dateEnd: string
+}
+
+type FormSearchProps = {
+    onSearch?: (event:customEventSearch) => void
+    open?: boolean
+    children?: React.ReactElement
+}
+
+export default function FormSearch({ onSearch, open, children }:FormSearchProps) {
+    const [dateStart, setDateStart] = useState('2019-09-03')
+    const [dateEnd, setDateEnd] = useState('2019-09-03')
+    const [position, setPosition] = useState<latLngType>({ lat:0, lng:0 })
 
     const handleChangeStart = (_:never, value:string|string[]) => {
         setDateStart( value as string )
@@ -18,13 +36,21 @@ export default function FormSearch() {
     const handleChangePlace = (place:google.maps.places.PlaceResult) => {
         const { lat, lng } = place.geometry?.location?.toJSON() as { lat:number, lng:number }
         console.log( lat, lng )
+        setPosition({ lat, lng })
     }
 
-    return <form className="corners relative flex flex-col items-center gap-2 sm:gap-5 h-fit w-full sm:w-1/2 md:w-1/3 py-8 px-4 bg-white sm:rounded-tl-xl sm:rounded-br-xl rounded-none bottom-0">
+    const handleSearch = () => {
+        if( onSearch ) onSearch({ position, dateEnd, dateStart })
+    }
+
+    const openClass = open ? "h-full rounded-none px-1 border-2 border-primary w-1/4" : "h-fit sm:rounded-tl-xl sm:rounded-br-xl rounded-none px-4 corners w-full sm:w-1/2 md:w-1/3"
+
+    return <form className={`relative flex flex-col items-center gap-2 sm:gap-5 py-8 bg-white bottom-0 ${openClass}`}>
         <InputLocation onPlaceChanged={handleChangePlace} />
         <DatePicker className="w-11/12" size="large" onChange={handleChangeStart} suffixIcon={<IconDate />} />
         <DatePicker className="w-11/12" size="large" onChange={handleChangeEnd} suffixIcon={<IconDate />} />
-        <Button className="bg-primary hover:!text-primary text-white py-2 text-lg">Consultar</Button>
+        <Button onClick={handleSearch} className="bg-primary hover:!text-primary text-white py-2 text-lg">Consultar</Button>
+        { open && children }
     </form>
 }
 
