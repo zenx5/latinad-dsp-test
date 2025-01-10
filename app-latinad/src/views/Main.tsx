@@ -1,17 +1,52 @@
-import { useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import FormSearch from '../components/FormSearch/FormSearch'
 import Map from '../components/Map/Map'
-import '../translates/i18n'
 import { useTranslation } from 'react-i18next'
-import { Button } from 'antd'
-import { MarkerF } from '@react-google-maps/api'
-import { responseAd as response } from '../tools/mockup'
+import MarkerDisplay from '../components/MarkerDisplay'
+import ListContainer from '../components/ListDisplay/ListContainer'
+
+type ItemType = {
+    id: number
+    name: string
+    latitude: number
+    longitude: number
+}
+
+type stateMainType = {
+    latitude: number
+    longitude: number
+    startDate: string
+    endDate:string
+}
+
+const initialQuery = {
+    latitude: 0,
+    longitude: 0,
+    startDate: '',
+    dateEnd: ''
+}
+
+const reducerQuery = (state:stateMainType, action:{ type:string }) => {
+    console.log(state)
+    console.log( action )
+    return initialQuery
+}
 
 
 export default function Main() {
+    const [query, dispatchQuery] = useReducer(reducerQuery, initialQuery)
     const [center, setCenter] = useState({ lat: 51.505, lng:-0.09 })
     const [isWelcomeView, setIsWelcomeView] = useState(false)
     const { t } = useTranslation()
+    const [items, setItems] = useState([])
+
+    useEffect(()=>{
+        fetch(`${import.meta.env.VITE_API_DISPLAY}/api/display`)
+            .then( response => response.json() )
+            .then( data => {
+                setItems( data.data )
+            } )
+    },[])
 
     const handleSearch = (event:any) => {
         console.log('search', event)
@@ -23,31 +58,21 @@ export default function Main() {
     return <div className="relative w-full h-full flex flex-row items-center justify-center">
         { isWelcomeView && <div className="bg-[#075E96] w-screen m-0 p-0 max-w-4xl mx-auto z-10 opacity-50 sm:h-with-footer h-without-footer absolute">sas</div>}
         <Map center={center} onChangePosition={console.log}>
-            { response.data.map( item => <MarkerF
-                icon={{
-                    path: "M1.5 0.5H46.5V25H29.5V28H40.5V31.5H11.5V28H24.5V25H4.5V4.5L1.5 0.5Z",
-                    fillColor: "#0096F5",
-                    fillOpacity: 0.6,
-                    strokeWeight: 0.5,
-                    rotation: 0,
-                    scale: 1,
-                    anchor: new google.maps.Point(0, 0)
-                  }}
-                position={{ lat:item.latitude, lng:item.longitude }} />)}
-
+            { items.map( (item:ItemType) => <MarkerDisplay key={`marker-${item.id}`} color="#0096F5" lat={item.latitude} lng={item.longitude} /> )}
         </Map>
         <div className={`flex sm:flex-row flex-col-reverse sm:justify-between justify-start gap-20 items-start w-full ${modeClass}`}>
             <FormSearch onSearch={handleSearch} open={ !isWelcomeView }>
-                <ul className="w-full divide-y border-y">
-                    { response.data.map( item => <li className="w-full px-2 py-1">
-                        <Button type="link" onClick={()=>setCenter({ lat:item.latitude, lng:item.longitude })} className="w-full">{ item.name }</Button>
-                    </li> ) }
-                </ul>
+                <ListContainer items={items}></ListContainer>
             </FormSearch>
-            { isWelcomeView && <div className="sm:w-1/2 w-full text-white ">
-                <h1 className="text-center text-3xl font-bold mb-10">{t('title-action')}</h1>
-                <p className="text-xl text-center sm:text-left">{t('copy-action')}</p>
-            </div>}
+            { isWelcomeView && <Title title={t('title-action')} subtitle={t('copy-action')} />}
         </div>
+    </div>
+}
+
+function Title({ title, subtitle }:{ title:string, subtitle:string }){
+
+    return <div className="sm:w-1/2 w-full text-white ">
+        <h1 className="text-center text-3xl font-bold mb-10">{title}</h1>
+        <p className="text-xl text-center sm:text-left">{subtitle}</p>
     </div>
 }

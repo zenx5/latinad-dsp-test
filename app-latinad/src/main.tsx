@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import './index.css'
 import Main from './views/Main.tsx';
 import Layout from './views/Layout.tsx';
+import './translates/i18n'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
