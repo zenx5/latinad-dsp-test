@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { Button } from "antd";
 import { Outlet } from "react-router";
 import { useTranslation } from "react-i18next";
+import { useLoadScript, type Libraries } from "@react-google-maps/api"
 import Isotipo from "../assets/latinad.isotipo.svg?react"
 import Imagotipo from "../assets/latinad.imagotipo.svg?react"
 import { availableLangs, defaultLang } from "../translates/langs";
-import { useState } from "react";
 
+
+const libraries = [ "places", "geometry", "drawing", "visualization" ] as Libraries
 
 export default function Layout() {
     const { i18n } = useTranslation()
@@ -17,7 +20,13 @@ export default function Layout() {
         i18n.changeLanguage( availableLangs[nextLang] )
     }
 
-    return <div className="w-screen h-screen m-0 p-0  max-w-4xl mx-auto bg-[#075E96]">
+    const { isLoaded } = useLoadScript({
+        nonce:'mi-app',
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
+        libraries
+    });
+
+    return <div className="w-screen h-screen m-0 p-0  max-w-4xl mx-auto">
         <header className="bg-white bg-shadow-slate flex flex-row justify-between py-4 px-6">
             <span className="flex sm:flex-row flex-col sm:items-start items-center sm:gap-2 gap-1 h-10">
                 <span className="sm:w-10 sm:h-10 w-5 h-5">
@@ -30,7 +39,7 @@ export default function Layout() {
             <Button type="primary" onClick={handleChangeLang} className="rounded-full uppercase">{ availableLangs[currentLang] }</Button>
         </header>
         <main className="layout-main-root">
-            <Outlet />
+            { isLoaded && <Outlet />}
         </main>
         <footer className="bg-white bg-shadow-slate sm:flex flex-row justify-between py-4 px-6 h-20 hidden absolute bottom-0 w-full max-w-4xl mx-auto"></footer>
     </div>

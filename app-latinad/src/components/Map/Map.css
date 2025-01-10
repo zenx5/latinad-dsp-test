@@ -1,0 +1,5 @@
+.map-container{
+    @apply sm:h-with-footer h-without-footer;
+    @apply w-screen m-0 p-0 max-w-4xl mx-auto;
+    @apply absolute overflow-hidden;
+}
