@@ -2,14 +2,15 @@ import { ButtonProps, List } from "antd"
 import Item from "./Item"
 
 type ListProps = {
-    items:any[]
+    items: any[]
+    onClick?: (id:number, item:any) => void
     itemProps?: ButtonProps
 }
 
-export default function ListContainer({ items, itemProps, ...props }:ListProps) {
+export default function ListContainer({ items, itemProps, onClick, ...props }:ListProps) {
 
-    const handleClickItem = (item:any) => (id:number, ev:React.MouseEvent) => {
-        console.log( id, item, ev)
+    const handleClickItem = (item:any) => (id:number)=>{
+        if(onClick) onClick( id, item)
     }
 
 

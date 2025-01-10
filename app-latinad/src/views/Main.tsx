@@ -87,6 +87,13 @@ export default function Main() {
         }
     }
 
+    const handleSelectLocation = (id:string|number, item:{ latitude:number, longitude:number }) => {
+        setCenter({
+            lat: item.latitude,
+            lng: item.longitude
+        })
+    }
+
     const modeClass = isWelcomeView ? "sm:p-4 p-0 sm:h-fit h-full z-20" : "p:0 h-full"
 
     return <div className="relative w-full h-full flex flex-row items-center justify-center">
@@ -96,7 +103,7 @@ export default function Main() {
         </Map>
         <div className={`flex sm:flex-row flex-col-reverse sm:justify-between justify-start gap-20 items-start w-full ${modeClass}`}>
             <FormSearch onSearch={handleSearch} open={ !isWelcomeView } loading={query.loading}>
-                <ListContainer items={items}></ListContainer>
+                <ListContainer items={items} onClick={handleSelectLocation}/>
             </FormSearch>
             { isWelcomeView && <Title title={t('title-action')} subtitle={t('copy-action')} />}
         </div>

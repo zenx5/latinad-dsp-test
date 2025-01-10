@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, List } from "antd";
 
 type ItemProps = {
     id:number
@@ -12,5 +12,7 @@ export default function Item({ id, name, onClick }:ItemProps) {
         if(onClick) onClick(id, ev)
     }
 
-    return <Button type="link" onClick={handleClick}>{ name }</Button>
+    return <List.Item className="!p-0"  onClick={handleClick}>
+        <Button type="link">{ name }</Button>
+    </List.Item>
 }
