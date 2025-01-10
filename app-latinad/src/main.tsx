@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from "react-router";
 
 import './index.css'
-import Main from './views/Main.tsx';
+import Main from './views/Main/Main.tsx';
+import Cart from './views/Cart.tsx';
 import Layout from './views/Layout.tsx';
 import './translates/i18n'
 
@@ -13,7 +14,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Main />} />
-          <Route path="/cart" element={<span>cart</span>} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<span>checkout</span>} />
         </Route>
       </Routes>
