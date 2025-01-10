@@ -17,3 +17,9 @@
         opacity: 1 !important;
     }
 }
+
+.align-loader{
+    .ant-btn-icon{
+        display: flex;
+    }
+}
