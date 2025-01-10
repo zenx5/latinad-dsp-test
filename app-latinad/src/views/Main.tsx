@@ -4,6 +4,7 @@ import Map from '../components/Map/Map'
 import { useTranslation } from 'react-i18next'
 import MarkerDisplay from '../components/MarkerDisplay'
 import ListContainer from '../components/ListDisplay/ListContainer'
+import Title from '../components/Title'
 
 type ItemType = {
     id: number
@@ -12,45 +13,78 @@ type ItemType = {
     longitude: number
 }
 
-type stateMainType = {
+type stateQueryType = {
+    loading: boolean
     latitude: number
     longitude: number
-    startDate: string
-    endDate:string
+    dateStart: string
+    dateEnd: string
 }
 
 const initialQuery = {
+    loading: false,
     latitude: 0,
     longitude: 0,
-    startDate: '',
+    dateStart: '',
     dateEnd: ''
 }
 
-const reducerQuery = (state:stateMainType, action:{ type:string }) => {
-    console.log(state)
-    console.log( action )
-    return initialQuery
+const reducerQuery = (state:stateQueryType, action:{ type:string, value?:string|number }) => {
+    switch( action?.type ) {
+        case 'toggle_loading':
+            return {...state, loading:!state.loading}
+        case 'latitude':
+            if( !action?.value ) return state
+            return {...state, latitude: action.value as number }
+        case 'longitude':
+            if( !action?.value ) return state
+            return {...state, longitude: action.value as number }
+        case 'from':
+            if( !action?.value ) return state
+            return {...state, dateStart: action.value as string }
+        case 'to':
+            if( !action?.value ) return state
+            return {...state, dateEnd: action.value as string }
+        default:
+            return state
+    }
 }
 
 
 export default function Main() {
     const [query, dispatchQuery] = useReducer(reducerQuery, initialQuery)
     const [center, setCenter] = useState({ lat: 51.505, lng:-0.09 })
-    const [isWelcomeView, setIsWelcomeView] = useState(false)
+    const [isWelcomeView, setIsWelcomeView] = useState(true)
     const { t } = useTranslation()
     const [items, setItems] = useState([])
 
     useEffect(()=>{
-        fetch(`${import.meta.env.VITE_API_DISPLAY}/api/display`)
-            .then( response => response.json() )
-            .then( data => {
-                setItems( data.data )
-            } )
+        navigator.geolocation.getCurrentPosition( location => {
+            setCenter({
+                lat: location.coords.latitude,
+                lng: location.coords.longitude
+            })
+        }  )
     },[])
 
-    const handleSearch = (event:any) => {
-        console.log('search', event)
-        setIsWelcomeView(false)
+    const handleSearch = async (event:any) => {
+        dispatchQuery({ type:'latitude', value:event.position.lat })
+        dispatchQuery({ type:'longitude', value:event.position.lng })
+        dispatchQuery({ type:'from', value:event.dateStart })
+        dispatchQuery({ type:'to', value:event.dateEnd })
+        setIsWelcomeView( prev => !prev )
+        try{
+            dispatchQuery({ type:'toggle_loading' })
+            const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/api/display`)
+            const data = await response.json()
+            setItems( data.data )
+        }
+        catch(e:any) {
+            console.log('catch')
+        }
+        finally {
+            dispatchQuery({ type:'toggle_loading' })
+        }
     }
 
     const modeClass = isWelcomeView ? "sm:p-4 p-0 sm:h-fit h-full z-20" : "p:0 h-full"
@@ -61,18 +95,10 @@ export default function Main() {
             { items.map( (item:ItemType) => <MarkerDisplay key={`marker-${item.id}`} color="#0096F5" lat={item.latitude} lng={item.longitude} /> )}
         </Map>
         <div className={`flex sm:flex-row flex-col-reverse sm:justify-between justify-start gap-20 items-start w-full ${modeClass}`}>
-            <FormSearch onSearch={handleSearch} open={ !isWelcomeView }>
+            <FormSearch onSearch={handleSearch} open={ !isWelcomeView } loading={query.loading}>
                 <ListContainer items={items}></ListContainer>
             </FormSearch>
             { isWelcomeView && <Title title={t('title-action')} subtitle={t('copy-action')} />}
         </div>
-    </div>
-}
-
-function Title({ title, subtitle }:{ title:string, subtitle:string }){
-
-    return <div className="sm:w-1/2 w-full text-white ">
-        <h1 className="text-center text-3xl font-bold mb-10">{title}</h1>
-        <p className="text-xl text-center sm:text-left">{subtitle}</p>
     </div>
 }
