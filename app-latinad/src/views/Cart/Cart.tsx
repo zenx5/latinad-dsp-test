@@ -47,12 +47,9 @@ export default function Cart() {
     }
 
     const handleChangeCheck = (item:{ id:number }) => (check:boolean) => {
-        if( !check && !cart.removeItems.includes(item.id) ){
-            dispatchCart({ type:'set_remove', payload:[...cart.removeItems, item.id] })
-        }
-        if( check && cart.removeItems.includes(item.id) ){
-            dispatchCart({ type:'set_remove', payload:cart.removeItems.filter( (id:number) => id!==item.id ) })
-        }
+        if( check!==cart.removeItems.includes(item.id)) return
+        if( check ) dispatchCart({ type:'set_remove', payload:cart.removeItems.filter( (id:number) => id!==item.id ) })
+        else dispatchCart({ type:'set_remove', payload:[...cart.removeItems, item.id] })
     }
 
     const isSelected = (element:{ id:number }) => element.id===cart.itemSelected
