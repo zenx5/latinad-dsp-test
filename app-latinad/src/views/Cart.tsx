@@ -70,7 +70,9 @@ export default function Cart() {
             >
                 <MarkerDisplay color="#0096F5" {...items.find( item => item.id===selected)}/>
             </GoogleMap>
-            { selected && <LocationDetail {...items.find( item => item.id===selected)} />}
+            <span>
+                { selected && <LocationDetail {...items.find( item => item.id===selected)} />}
+            </span>
         </div>
     </div>
 }

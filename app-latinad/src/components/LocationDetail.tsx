@@ -12,14 +12,14 @@ type LocationDetailProps = {
 export default function LocationDetail({ lat, lng, price, size, name }:LocationDetailProps) {
 
     return <div className="mt-2 p-2">
-        <Typography.Title level={3}>Detalles</Typography.Title>
+        <Typography.Title level={2}>Detalles</Typography.Title>
         <ShowInfo label="Name" value={name} />
 
-        <span className="flex flex-row gap-2 justify-between mt-2">
+        <span className="grid grid-cols-2 gap-2">
             <ShowInfo label="Latitud" value={lat} />
             <ShowInfo label="Longitud" value={lng} />
         </span>
-        <span className="flex flex-row gap-2 justify-between mt-2">
+        <span className="grid grid-cols-2 gap-2">
             <ShowInfo label="Size" value={size} />
             <ShowInfo label="Price" value={price} />
         </span>
