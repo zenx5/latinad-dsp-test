@@ -1,16 +1,30 @@
 import { useEffect, useState } from "react"
 import { Button, List} from "antd"
-import MarkerDisplay from "../components/MarkerDisplay"
+import MarkerDisplay from "../../components/MarkerDisplay"
 import { GoogleMap } from "@react-google-maps/api"
 
-import LocationDetail from "../components/LocationDetail"
-import ItemCart from "../components/ItemCart"
+import LocationDetail from "./LocationDetail"
+import ItemCart from "../../components/ItemCart"
+import { useTranslation } from "react-i18next"
+
+const itemBase = {
+    id:1,
+    price_per_day:0.077247812,
+    price_currency: "USD",
+    lat:8.2628711,
+    lng:-62.7791521,
+    name:"Pantalla ",
+    size_width: 900,
+    size_height: 500,
+    formatted_address: "Av. Sarmiento 237, M5500 ciudad, Mendoza, Argentina"
+}
 
 export default function Cart() {
+    const { t } = useTranslation()
     const [removeItems, setRemoveItems] = useState<number[]>([])
     const [selected, setSelected] = useState(0)
     const items = Array(50)
-        .fill({ id:1, price:10, lat:8.2628711, lng:-62.7791521, name:"Pantalla ", size:100 })
+        .fill(itemBase)
         .map( (item, index) => ({
             ...item,
             id:index+1,
@@ -49,8 +63,8 @@ export default function Cart() {
         <div className="col-span-1 px-2 h-auto overflow-y-scroll" style={{ scrollbarWidth:'thin', scrollbarColor:'#0096f544 #0096f511' }}>
             <List
                 header={<span className="flex flex-row justify-between">
-                    <h1 className="text-2xl font-bold">Titulo</h1>
-                    {removeItems.length>0 && <Button type="primary" onClick={handleRemoveItems}>Guardar</Button>}
+                    <h1 className="text-xl font-bold">{ t('cart.title') }</h1>
+                    {removeItems.length>0 && <Button type="primary" onClick={handleRemoveItems}>{ t('cart.remove') }</Button>}
                 </span>}
                 dataSource={items}
                 renderItem={ item => <ItemCart name={item.name} price={item.price} onClick={handleSelect(item)} onChangeCheck={handleChangeCheck(item)} selected={isSelected(item)}/> }

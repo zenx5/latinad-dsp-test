@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 
 import './index.css'
 import Main from './views/Main/Main.tsx';
-import Cart from './views/Cart.tsx';
+import Cart from './views/Cart/Cart.tsx';
 import Layout from './views/Layout.tsx';
 import './translates/i18n'
 
