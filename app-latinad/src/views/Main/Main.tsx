@@ -1,61 +1,24 @@
 import { useEffect, useReducer, useState } from 'react'
-import FormSearch from '../components/FormSearch/FormSearch'
-import Map from '../components/Map/Map'
 import { useTranslation } from 'react-i18next'
-import MarkerDisplay from '../components/MarkerDisplay'
-import ListContainer from '../components/ListDisplay/ListContainer'
-import Title from '../components/Title'
 
-type ItemType = {
-    id: number
-    name: string
-    latitude: number
-    longitude: number
-}
+import './type.d'
 
-type stateQueryType = {
-    loading: boolean
-    latitude: number
-    longitude: number
-    dateStart: string
-    dateEnd: string
-}
+import FormSearch from '../../components/FormSearch/FormSearch'
+import Map from '../../components/Map/Map'
+import MarkerDisplay from '../../components/MarkerDisplay'
+import ListContainer from '../../components/ListDisplay/ListContainer'
+import Title from '../../components/Title'
 
-const initialQuery = {
-    loading: false,
-    latitude: 0,
-    longitude: 0,
-    dateStart: '',
-    dateEnd: ''
-}
+import { initialQuery, reducerQuery } from './reducer'
 
-const reducerQuery = (state:stateQueryType, action:{ type:string, value?:string|number }) => {
-    switch( action?.type ) {
-        case 'toggle_loading':
-            return {...state, loading:!state.loading}
-        case 'latitude':
-            if( !action?.value ) return state
-            return {...state, latitude: action.value as number }
-        case 'longitude':
-            if( !action?.value ) return state
-            return {...state, longitude: action.value as number }
-        case 'from':
-            if( !action?.value ) return state
-            return {...state, dateStart: action.value as string }
-        case 'to':
-            if( !action?.value ) return state
-            return {...state, dateEnd: action.value as string }
-        default:
-            return state
-    }
-}
+
 
 
 export default function Main() {
-    const [query, dispatchQuery] = useReducer(reducerQuery, initialQuery)
-    const [center, setCenter] = useState({ lat: 51.505, lng:-0.09 })
-    const [isWelcomeView, setIsWelcomeView] = useState(true)
     const { t } = useTranslation()
+    const [query, dispatchQuery] = useReducer(reducerQuery, initialQuery)
+    const [center, setCenter] = useState({ lat: 0, lng:0 })
+    const [isWelcomeView, setIsWelcomeView] = useState(true)
     const [items, setItems] = useState([])
 
     useEffect(()=>{
@@ -97,7 +60,7 @@ export default function Main() {
     const modeClass = isWelcomeView ? "sm:p-4 p-0 sm:h-fit h-full z-20" : "p:0 h-full"
 
     return <div className="relative w-full h-full flex flex-row items-center justify-center">
-        { isWelcomeView && <div className="bg-[#075E96] w-screen m-0 p-0 max-w-4xl mx-auto z-10 opacity-50 sm:h-with-footer h-without-footer absolute">sas</div>}
+        { isWelcomeView && <div className="bg-[#075E96] w-screen m-0 p-0 max-w-4xl mx-auto z-10 opacity-50 sm:h-with-footer h-without-footer absolute"></div>}
         <Map center={center} onChangePosition={console.log}>
             { items.map( (item:ItemType) => <MarkerDisplay key={`marker-${item.id}`} color="#0096F5" lat={item.latitude} lng={item.longitude} /> )}
         </Map>
