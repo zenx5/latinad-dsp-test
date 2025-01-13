@@ -23,12 +23,13 @@ import Item from '../../components/ListDisplay/Item'
 
 export default function Main() {
     const { query, cart } = useSelector.withTypes<RootState>()( state => state )
-    console.log( cart.items )
     const dispatch = useDispatch.withTypes<AppDispatch>()()
     const { t } = useTranslation()
     const [currentLocation, setCurrentLocation] = useState(-1)
     const [center, setCenter] = useState({ lat: 0, lng:0 })
     const [isWelcomeView, setIsWelcomeView] = useState(cart.items.length===0)
+
+    //const isWelcome = cart.items.length===0
 
     useEffect(()=>{
         navigator.geolocation.getCurrentPosition( location => {
@@ -44,15 +45,23 @@ export default function Main() {
         dispatch(setLongitude(event.position.lng ))
         dispatch(setFrom(event.dateStart ))
         dispatch(setTo(event.dateEnd ))
-        setIsWelcomeView( prev => !prev )
+        setIsWelcomeView( false )
         try{
             dispatch(loadingOn())
-            const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/api/display`)
+            const deltaCoor = Math.random()
+            const searchParams = new URLSearchParams()
+            searchParams.set("date_from", query.dateStart)
+            searchParams.set("date_to", query.dateEnd)
+            searchParams.set("lat_sw", String( query.latitude - deltaCoor ) )
+            searchParams.set("lng_sw", String( query.longitude - deltaCoor ) )
+            searchParams.set("lat_ne", String( query.latitude + deltaCoor ) )
+            searchParams.set("lng_ne", String( query.longitude + deltaCoor ) )
+            const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/api/display?${searchParams.toString()}`)
             const data = await response.json()
             dispatch(setResult(data.data))
         }
         catch(e:any) {
-            console.log('catch')
+            dispatch(setResult([]))
         }
         finally {
             dispatch(loadingOff())
@@ -82,7 +91,13 @@ export default function Main() {
     const AddToCart = (id:number) => {
         if( !intoCart(id) ) {
             const item = query.items.find( (item:{ id:number }) => item.id===id )
-            if( item ) dispatch(addToCart(item))
+            if( item ) {
+                dispatch(addToCart({
+                    ...item as ItemType,
+                    dateStart:query.dateStart,
+                    dateEnd:query.dateEnd
+                }))
+            }
         }
         else {
             dispatch(removeItem(id))
