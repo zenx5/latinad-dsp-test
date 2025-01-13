@@ -1,0 +1,17 @@
+.item-selected {
+    @apply !p-0;
+    button {
+        &:nth-child(1) {
+            @apply underline;
+        }
+        &:hover{
+            @apply !text-[#ff9900];
+        }
+        @apply !text-[#ff9900];
+
+    }
+}
+
+.item-non-selected {
+    @apply !p-0;
+}

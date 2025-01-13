@@ -44,13 +44,15 @@ export default function FormSearch({ onSearch, loading, open, children }:FormSea
         if( onSearch ) onSearch({ position, dateEnd, dateStart })
     }
 
-    const openClass = open ? "h-full rounded-none px-1 border-2 border-primary w-1/4" : "h-[0%] min-h-fit sm:rounded-tl-xl sm:rounded-br-xl rounded-none px-4 corners w-full sm:w-1/2 md:w-1/3"
+    const openClass = open ? "h-full rounded-none border-2 border-primary w-1/4" : "h-[0%] min-h-fit sm:rounded-tl-xl sm:rounded-br-xl rounded-none corners w-full sm:w-1/2 md:w-1/3"
 
-    return <form className={`relative flex flex-col items-center gap-2 sm:gap-5 py-8 bg-white bottom-0 ${openClass}`}>
-        <InputLocation onPlaceChanged={handleChangePlace} />
-        <DatePicker className="w-11/12" size="large" onChange={handleChangeStart} suffixIcon={<IconDate />} />
-        <DatePicker className="w-11/12" size="large" onChange={handleChangeEnd} suffixIcon={<IconDate />} />
-        <Button onClick={handleSearch} loading={loading} className="bg-primary hover:!text-primary text-white py-2 items-center flex flex-row text-lg align-loader">Consultar</Button>
+    return <form className={`relative flex flex-col items-center gap-2 px-0 sm:gap-5 py-0 bg-white bottom-0 ${openClass}`} style={{ scrollbarWidth:'thin', scrollbarColor:'#0096f544 #0096f511', overflowY: open ? 'scroll' :'visible' }}>
+        <span className="p-0 m-0 flex flex-col py-4 border-b border-slate-300 items-center gap-2 sm:gap-5 w-full sticky top-0 bg-white z-10">
+            <InputLocation onPlaceChanged={handleChangePlace} />
+            <DatePicker className="w-11/12" size="large" onChange={handleChangeStart} suffixIcon={<IconDate />} />
+            <DatePicker className="w-11/12" size="large" onChange={handleChangeEnd} suffixIcon={<IconDate />} />
+            <Button onClick={handleSearch} loading={loading} className="bg-primary hover:!text-primary text-white py-2 items-center flex flex-row text-lg align-loader">Consultar</Button>
+        </span>
         { open && children }
     </form>
 }

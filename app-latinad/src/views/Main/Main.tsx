@@ -1,25 +1,34 @@
-import { useEffect, useReducer, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSelector, useDispatch } from 'react-redux'
 
 import './type.d'
+import './List.css'
+
+import { AppDispatch, RootState } from '../../tools/store'
 
 import FormSearch from '../../components/FormSearch/FormSearch'
 import Map from '../../components/Map/Map'
 import MarkerDisplay from '../../components/MarkerDisplay'
-import ListContainer from '../../components/ListDisplay/ListContainer'
 import Title from '../../components/Title'
 
-import { initialQuery, reducerQuery } from './reducer'
+
+import { loadingOff, loadingOn, setFrom, setLatitude, setLongitude, setResult, setTo } from '../../tools/slices/query'
+import { addToCart, removeItem } from '../../tools/slices/cart'
+import { List } from 'antd'
+import Item from '../../components/ListDisplay/Item'
 
 
 
 
 export default function Main() {
+    const { query, cart } = useSelector.withTypes<RootState>()( state => state )
+    console.log( cart.items )
+    const dispatch = useDispatch.withTypes<AppDispatch>()()
     const { t } = useTranslation()
-    const [query, dispatchQuery] = useReducer(reducerQuery, initialQuery)
+    const [currentLocation, setCurrentLocation] = useState(-1)
     const [center, setCenter] = useState({ lat: 0, lng:0 })
-    const [isWelcomeView, setIsWelcomeView] = useState(true)
-    const [items, setItems] = useState([])
+    const [isWelcomeView, setIsWelcomeView] = useState(cart.items.length===0)
 
     useEffect(()=>{
         navigator.geolocation.getCurrentPosition( location => {
@@ -31,30 +40,53 @@ export default function Main() {
     },[])
 
     const handleSearch = async (event:any) => {
-        dispatchQuery({ type:'latitude', value:event.position.lat })
-        dispatchQuery({ type:'longitude', value:event.position.lng })
-        dispatchQuery({ type:'from', value:event.dateStart })
-        dispatchQuery({ type:'to', value:event.dateEnd })
+        dispatch(setLatitude(event.position.lat ))
+        dispatch(setLongitude(event.position.lng ))
+        dispatch(setFrom(event.dateStart ))
+        dispatch(setTo(event.dateEnd ))
         setIsWelcomeView( prev => !prev )
         try{
-            dispatchQuery({ type:'toggle_loading' })
+            dispatch(loadingOn())
             const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/api/display`)
             const data = await response.json()
-            setItems( data.data )
+            dispatch(setResult(data.data))
         }
         catch(e:any) {
             console.log('catch')
         }
         finally {
-            dispatchQuery({ type:'toggle_loading' })
+            dispatch(loadingOff())
         }
     }
 
-    const handleSelectLocation = (id:string|number, item:{ latitude:number, longitude:number }) => {
-        setCenter({
-            lat: item.latitude,
-            lng: item.longitude
-        })
+    const handleSelectLocation = (id:number) => {
+        setCurrentLocation(id)
+        const itemFind = query.items.find( (item:{id:number}) => item.id===id ) as { latitude:number, longitude:number }|undefined
+        if( itemFind ){
+            setCenter({
+                lat: itemFind.latitude,
+                lng: itemFind.longitude
+            })
+        }
+    }
+
+    const intoCart = (id:number) => {
+        return !!cart.items.find( item => item.id === id )
+    }
+
+    const getColorMarker = (id:number) => {
+        if( id === currentLocation ) return "#FFFF00"
+        return intoCart(id) ? "#00ffaa" : "#0096F5"
+    }
+
+    const AddToCart = (id:number) => {
+        if( !intoCart(id) ) {
+            const item = query.items.find( (item:{ id:number }) => item.id===id )
+            if( item ) dispatch(addToCart(item))
+        }
+        else {
+            dispatch(removeItem(id))
+        }
     }
 
     const modeClass = isWelcomeView ? "sm:p-4 p-0 sm:h-fit h-full z-20" : "p:0 h-full"
@@ -62,11 +94,21 @@ export default function Main() {
     return <div className="relative w-full h-full flex flex-row items-center justify-center">
         { isWelcomeView && <div className="bg-[#075E96] w-screen m-0 p-0 max-w-4xl mx-auto z-10 opacity-50 sm:h-with-footer h-without-footer absolute"></div>}
         <Map center={center} onChangePosition={console.log}>
-            { items.map( (item:ItemType) => <MarkerDisplay key={`marker-${item.id}`} color="#0096F5" lat={item.latitude} lng={item.longitude} /> )}
+            { query.items.map( (item:ItemType) => <MarkerDisplay key={`marker-${item.id}`} color={ getColorMarker(item.id)} lat={item.latitude} lng={item.longitude} /> )}
         </Map>
         <div className={`flex sm:flex-row flex-col-reverse sm:justify-between justify-start gap-20 items-start w-full ${modeClass}`}>
             <FormSearch onSearch={handleSearch} open={ !isWelcomeView } loading={query.loading}>
-                <ListContainer items={items} onClick={handleSelectLocation}/>
+                <List
+                    dataSource={query.items}
+                    renderItem={ (item:{ id:number, name:string }) =>
+                        <Item
+                            className={ item.id===currentLocation ? 'item-selected' : 'item-non-selected' }
+                            name={item.name}
+                            isCart={intoCart(item.id)}
+                            onClick={()=>handleSelectLocation(item.id)}
+                            onCart={()=>AddToCart(item.id)}
+                    /> }
+                />
             </FormSearch>
             { isWelcomeView && <Title title={t('title-action')} subtitle={t('copy-action')} />}
         </div>

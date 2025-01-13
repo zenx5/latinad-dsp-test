@@ -11,4 +11,5 @@ type stateQueryType = {
     longitude: number
     dateStart: string
     dateEnd: string
+    items: ItemType[]
 }
