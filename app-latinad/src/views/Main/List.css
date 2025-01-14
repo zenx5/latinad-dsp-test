@@ -1,6 +1,6 @@
 .item-selected {
-    @apply !p-0;
-    button {
+    @apply !py-1;
+    span {
         &:nth-child(1) {
             @apply underline;
         }
@@ -13,5 +13,5 @@
 }
 
 .item-non-selected {
-    @apply !p-0;
+    @apply !py-1;
 }

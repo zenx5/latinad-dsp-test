@@ -43,6 +43,7 @@ export default function Main() {
     },[])
 
     const handleSearch = async (event:any) => {
+        console.log('handleSearch')
         dispatch(setLatitude(event.position.lat ))
         dispatch(setLongitude(event.position.lng ))
         dispatch(setFrom(event.dateStart ))
@@ -58,11 +59,25 @@ export default function Main() {
             searchParams.set("lng_sw", String( query.longitude - deltaCoor ) )
             searchParams.set("lat_ne", String( query.latitude + deltaCoor ) )
             searchParams.set("lng_ne", String( query.longitude + deltaCoor ) )
-            const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/displays/searchTest?date_from=2024-6-23&date_to=2025-12-29}`) //${searchParams.toString()
+            const headers = new Headers();
+            headers.append("Accept", "application/json");
+            headers.append("Cache-Control", "no-cache");
+            headers.append("Referer", "https://latinad.com");
+            headers.append("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
+            headers.append("sec-ch-ua", "Google");
+            headers.append("sec-ch-ua-mobile", "?0");
+            headers.append("sec-ch-ua-platform", "Windows");
+            const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/displays/searchTest?date_from=2024-6-23&date_to=2025-12-29`, {
+                method: "GET",
+                headers: headers,
+                redirect: "follow"
+            }) //${searchParams.toString()
             const data = await response.json()
+            console.log( data )
             dispatch(setResult(data.data))
         }
         catch(e:any) {
+            console.log(e.message)
             dispatch(setResult([]))
         }
         finally {
