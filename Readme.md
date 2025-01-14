@@ -1,3 +1,8 @@
+# Instrucciones
+1. Entrar a la carpeta app-latinad
+2. Ejcutar `npm install`
+3. Ejecutar `npm run dev`
+
 # Bitacora de la prueba
 
 ## Día 1
