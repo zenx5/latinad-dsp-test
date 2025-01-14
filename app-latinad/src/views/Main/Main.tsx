@@ -43,7 +43,6 @@ export default function Main() {
     },[])
 
     const handleSearch = async (event:any) => {
-        console.log('handleSearch')
         dispatch(setLatitude(event.position.lat ))
         dispatch(setLongitude(event.position.lng ))
         dispatch(setFrom(event.dateStart ))
@@ -51,14 +50,16 @@ export default function Main() {
         setIsWelcomeView( false )
         try{
             dispatch(loadingOn())
+            const latitude = Number( event.position.lat ?? center.lat )
+            const longitude = Number( event.position.lng ?? center.lng )
             const deltaCoor = Number(import.meta.env.VITE_DELTA_COOR ?? 0.2 )
             const searchParams = new URLSearchParams()
-            searchParams.set("date_from", query.dateStart)
-            searchParams.set("date_to", query.dateEnd)
-            searchParams.set("lat_sw", String( query.latitude - deltaCoor ) )
-            searchParams.set("lng_sw", String( query.longitude - deltaCoor ) )
-            searchParams.set("lat_ne", String( query.latitude + deltaCoor ) )
-            searchParams.set("lng_ne", String( query.longitude + deltaCoor ) )
+            searchParams.set("date_from", event.dateStart)
+            searchParams.set("date_to", event.dateEnd)
+            searchParams.set("lat_sw", String( latitude - deltaCoor ) )
+            searchParams.set("lng_sw", String( longitude - deltaCoor ) )
+            searchParams.set("lat_ne", String( latitude + deltaCoor ) )
+            searchParams.set("lng_ne", String( longitude + deltaCoor ) )
             const headers = new Headers();
             headers.append("Accept", "application/json");
             headers.append("Cache-Control", "no-cache");
@@ -67,11 +68,11 @@ export default function Main() {
             headers.append("sec-ch-ua", "Google");
             headers.append("sec-ch-ua-mobile", "?0");
             headers.append("sec-ch-ua-platform", "Windows");
-            const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/displays/searchTest?date_from=2024-6-23&date_to=2025-12-29`, {
+            const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/displays/searchTest?${searchParams.toString()}`, {
                 method: "GET",
                 headers: headers,
                 redirect: "follow"
-            }) //${searchParams.toString()
+            })
             const data = await response.json()
             console.log( data )
             dispatch(setResult(data.data))
