@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
-    @apply transition-all;
-}
-
 .layout-main-root {
     @apply sm:h-with-footer h-without-footer;
 }
