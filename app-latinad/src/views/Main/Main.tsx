@@ -58,7 +58,7 @@ export default function Main() {
             searchParams.set("lng_sw", String( query.longitude - deltaCoor ) )
             searchParams.set("lat_ne", String( query.latitude + deltaCoor ) )
             searchParams.set("lng_ne", String( query.longitude + deltaCoor ) )
-            const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/api/display?${searchParams.toString()}`)
+            const response = await fetch(`${import.meta.env.VITE_API_DISPLAY}/api/display??date_from=2024-6-23&date_to=2025-12-29}`) //${searchParams.toString()
             const data = await response.json()
             dispatch(setResult(data.data))
         }
