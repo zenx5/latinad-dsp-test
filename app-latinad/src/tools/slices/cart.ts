@@ -6,6 +6,8 @@ type itemType = {
     price_currency: string
     lat: number
     lng: number
+    latitude: number
+    longitude: number
     name: string
     size_width: number
     size_height: number
@@ -30,10 +32,18 @@ export const cartSlice = createSlice({
         removeItems: []
     } as cartType,
     reducers:{
-        setItems: (state, action:PayloadAction<any[]>) => {
-            console.log( 'setItems')
-            if( action.payload.length>0 ) return { ...state, items:action.payload, itemIndex:action.payload[0].id, itemSelected:action.payload[0], isSelected:true }
-            return { ...state, items:[], itemIndex:0, itemSelected:null, isSelected:false }
+        addToCart: (state, action) => {
+            return { ...state, items:[ ...state.items, action.payload ] }
+        },
+        removeItem: (state, action) => {
+            const newItems = state.items.filter( item => item.id!==action.payload )
+            return {
+                ...state,
+                items: newItems,
+                itemIndex: state.itemIndex===action.payload ? 0 : state.itemIndex,
+                itemSelected: state.itemIndex===action.payload ? null : state.itemSelected,
+                isSelected: state.itemIndex===action.payload ? false : state.isSelected
+            }
         },
         clearItems: (state) => ({ ...state, items:[], itemIndex:0, itemSelected:null, isSelected:false }),
         selectItem: (state, action:PayloadAction<number>) => {
@@ -52,6 +62,6 @@ export const cartSlice = createSlice({
 
 })
 
-export const { remove, setItems, clearItems, setRemove, clearRemove, selectItem } = cartSlice.actions
+export const { remove, addToCart, removeItem, clearItems, setRemove, clearRemove, selectItem } = cartSlice.actions
 
 export default cartSlice.reducer

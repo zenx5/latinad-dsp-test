@@ -2,17 +2,28 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from 'redux-persist';
 import CustomStorage from "./CustomStorage";
 import cartReducer from "./slices/cart"
+import generalReducer from "./slices/general"
+import queryReducer from "./slices/query"
 
 
 
 const persistConfig = {
     key:'root',
-    storage: CustomStorage
+    storage: CustomStorage,
+    blacklist: ['query']
 }
 
+
+
 const persistedReducer = persistReducer(persistConfig, combineReducers({
-    cart: cartReducer
+    general: generalReducer,
+    cart: cartReducer,
+    query: queryReducer
 }))
+
+
+
+
 
 const store = configureStore({
     reducer: persistedReducer,
