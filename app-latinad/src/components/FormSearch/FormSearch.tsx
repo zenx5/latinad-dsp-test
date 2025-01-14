@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, DatePicker } from "antd";
+import dayjs from "dayjs";
 import "./FormSearch.css"
 import InputLocation from "../InputLocation/InputLocation";
 
@@ -23,8 +24,9 @@ type FormSearchProps = {
 }
 
 export default function FormSearch({ onSearch, loading, open, children, label }:FormSearchProps) {
-    const [dateStart, setDateStart] = useState('2019-09-03')
-    const [dateEnd, setDateEnd] = useState('2019-09-03')
+    const currentDate = new Date().toLocaleDateString('en-CA')
+    const [dateStart, setDateStart] = useState(currentDate)
+    const [dateEnd, setDateEnd] = useState(currentDate)
     const [position, setPosition] = useState<latLngType>({ lat:0, lng:0 })
 
     const handleChangeStart = (_:never, value:string|string[]) => {
@@ -50,8 +52,8 @@ export default function FormSearch({ onSearch, loading, open, children, label }:
     return <form className={`relative flex flex-col items-center gap-2 px-0 sm:gap-5 py-0 bg-white bottom-0 ${openClass}`} style={{ scrollbarWidth:'thin', scrollbarColor:'#0096f544 #0096f511', overflowY: open ? 'scroll' :'visible' }}>
         <span className="p-0 m-0 flex flex-col py-4 border-b border-slate-300 items-center gap-2 sm:gap-5 w-full sticky top-0 bg-white z-10">
             <InputLocation onPlaceChanged={handleChangePlace} />
-            <DatePicker className="w-11/12" size="large" onChange={handleChangeStart} suffixIcon={<IconDate />} />
-            <DatePicker className="w-11/12" size="large" onChange={handleChangeEnd} suffixIcon={<IconDate />} />
+            <DatePicker className="w-11/12" size="large" minDate={dayjs(currentDate)} onChange={handleChangeStart} suffixIcon={<IconDate />} />
+            <DatePicker className="w-11/12" size="large" minDate={dayjs(dateStart)} onChange={handleChangeEnd} suffixIcon={<IconDate />} />
             <Button onClick={handleSearch} loading={loading} className="bg-primary hover:!text-primary text-white py-2 items-center flex flex-row text-lg align-loader">{label}</Button>
         </span>
         { open && children }
