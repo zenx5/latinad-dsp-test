@@ -15,7 +15,7 @@ const libraries = [ "places", "geometry", "drawing", "visualization" ] as Librar
 
 export default function Layout() {
     const location = useLocation()
-    const { cart, query } = useSelector.withTypes<RootState>()( state => state )
+    const { cart } = useSelector.withTypes<RootState>()( state => state )
     const { i18n, t } = useTranslation()
     const [currentLang, setCurrentLang] = useState( availableLangs.indexOf(defaultLang) )
 

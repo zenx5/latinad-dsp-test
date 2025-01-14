@@ -1,6 +1,5 @@
-import { GoogleMap, Marker } from "@react-google-maps/api"
+import { GoogleMap } from "@react-google-maps/api"
 import './Map.css'
-import { useRef } from "react"
 
 type MapProps = {
     center: {
