@@ -18,10 +18,11 @@ type FormSearchProps = {
     onSearch?: (event:customEventSearch) => void
     loading?: boolean
     open?: boolean
+    label: string
     children?: React.ReactElement
 }
 
-export default function FormSearch({ onSearch, loading, open, children }:FormSearchProps) {
+export default function FormSearch({ onSearch, loading, open, children, label }:FormSearchProps) {
     const [dateStart, setDateStart] = useState('2019-09-03')
     const [dateEnd, setDateEnd] = useState('2019-09-03')
     const [position, setPosition] = useState<latLngType>({ lat:0, lng:0 })
@@ -51,7 +52,7 @@ export default function FormSearch({ onSearch, loading, open, children }:FormSea
             <InputLocation onPlaceChanged={handleChangePlace} />
             <DatePicker className="w-11/12" size="large" onChange={handleChangeStart} suffixIcon={<IconDate />} />
             <DatePicker className="w-11/12" size="large" onChange={handleChangeEnd} suffixIcon={<IconDate />} />
-            <Button onClick={handleSearch} loading={loading} className="bg-primary hover:!text-primary text-white py-2 items-center flex flex-row text-lg align-loader">Consultar</Button>
+            <Button onClick={handleSearch} loading={loading} className="bg-primary hover:!text-primary text-white py-2 items-center flex flex-row text-lg align-loader">{label}</Button>
         </span>
         { open && children }
     </form>

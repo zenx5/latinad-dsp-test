@@ -27,9 +27,11 @@ export default function Main() {
     const { t } = useTranslation()
     const [currentLocation, setCurrentLocation] = useState(-1)
     const [center, setCenter] = useState({ lat: 0, lng:0 })
-    const [isWelcomeView, setIsWelcomeView] = useState(cart.items.length===0)
+    const [isWelcomeView, setIsWelcomeView] = useState(query.items.length===0)
 
-    //const isWelcome = cart.items.length===0
+    useEffect(()=>{
+        setIsWelcomeView( query.items.length===0 )
+    },[cart.items])
 
     useEffect(()=>{
         navigator.geolocation.getCurrentPosition( location => {
@@ -48,7 +50,7 @@ export default function Main() {
         setIsWelcomeView( false )
         try{
             dispatch(loadingOn())
-            const deltaCoor = Math.random()
+            const deltaCoor = Number(import.meta.env.VITE_DELTA_COOR ?? 0.2 )
             const searchParams = new URLSearchParams()
             searchParams.set("date_from", query.dateStart)
             searchParams.set("date_to", query.dateEnd)
@@ -112,9 +114,17 @@ export default function Main() {
             { query.items.map( (item:ItemType) => <MarkerDisplay key={`marker-${item.id}`} color={ getColorMarker(item.id)} lat={item.latitude} lng={item.longitude} /> )}
         </Map>
         <div className={`flex sm:flex-row flex-col-reverse sm:justify-between justify-start gap-20 items-start w-full ${modeClass}`}>
-            <FormSearch onSearch={handleSearch} open={ !isWelcomeView } loading={query.loading}>
+            <FormSearch label={t('send')} onSearch={handleSearch} open={ !isWelcomeView } loading={query.loading}>
                 <List
                     dataSource={query.items}
+                    locale={{
+                        emptyText: <span className="flex flex-col items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                            <span>{t('not_data')}</span>
+                        </span>
+                    }}
                     renderItem={ (item:{ id:number, name:string }) =>
                         <Item
                             className={ item.id===currentLocation ? 'item-selected' : 'item-non-selected' }

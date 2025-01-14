@@ -6,6 +6,8 @@ type itemType = {
     price_currency: string
     lat: number
     lng: number
+    latitude: number
+    longitude: number
     name: string
     size_width: number
     size_height: number
